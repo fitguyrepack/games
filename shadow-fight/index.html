@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadow Fight 2 – Premium Access</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cyan: #00c8ff;
+    --bg: #000;
+    --surface: #0c0c0d;
+    --border: #1a1a1e;
+    --text: #e0e0e0;
+    --text-dim: #888;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 20px 15px;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 400px; /* حجم مثالي لشاشة الهاتف */
+  }
+
+  /* ── SQUARE IMAGE FRAME ── */
+  .hero {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* جعل الإطار مربعاً تماماً */
+    background: #080808;
+    border: 1px solid var(--border);
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+  }
+  .hero img {
+    width: 100%; 
+    height: 100%;
+    object-fit: cover; /* لضمان ملء الصورة للمربع بدون تشويه */
+    display: block;
+  }
+  .hero-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, var(--surface) 100%);
+  }
+
+  /* ── CONTENT CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-item { text-align: center; }
+  .stat-value { color: var(--cyan); font-weight: 700; font-size: 14px; }
+  .stat-label { color: var(--text-dim); font-size: 10px; text-transform: uppercase; margin-top: 4px; }
+
+  .game-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+
+  .game-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 25px;
+  }
+
+  /* ── BUTTON ── */
+  .cta-btn {
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .cta-btn:active { transform: scale(0.98); background: rgba(0,200,255,0.05); }
+
+  /* ── LOADER ── */
+  .loader-wrap { display: none; margin-top: 15px; }
+  .loader-wrap.visible { display: block; }
+  .loader-track { height: 3px; background: #1a1a1e; border-radius: 2px; overflow: hidden; margin-top: 8px; }
+  .loader-fill { height: 100%; width: 0%; background: var(--cyan); transition: width 3s linear; }
+
+  .reviews { margin-top: 30px; }
+  .review { margin-bottom: 15px; padding: 10px; background: #111; border-radius: 4px; }
+  .review-user { font-size: 12px; color: #fff; font-weight: 600; }
+  .review-text { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="hero">
+    <img src="https://i.postimg.cc/NMyLDg00/download-(1).jpg" alt="Shadow Fight 2">
+    <div class="hero-gradient"></div>
+  </div>
+
+  <div class="card">
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-value">★★★★★</div>
+        <div class="stat-label">4.9 Rating</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">1.2M+</div>
+        <div class="stat-label">Downloads</div>
+      </div>
+    </div>
+
+    <h1 class="game-title">Shadow Fight 2</h1>
+    <p class="game-desc">Experience the ultimate martial arts journey. Master lethal skills and legendary weapons in this premium fan-favorite edition.</p>
+
+    <button class="cta-btn" id="ctaBtn" onclick="start()">ACCESS CONTENT</button>
+
+    <div class="loader-wrap" id="loaderWrap">
+      <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--cyan)">
+        <span>VERIFYING...</span>
+        <span id="pct">0%</span>
+      </div>
+      <div class="loader-track"><div class="loader-fill" id="fill"></div></div>
+    </div>
+
+    <div class="reviews">
+      <div class="review">
+        <div class="review-user">Robert J. ⭐⭐⭐⭐⭐</div>
+        <div class="review-text">Works perfectly on my iPhone. The best version so far!</div>
+      </div>
+      <div class="review">
+        <div class="review-user">Sarah W. ⭐⭐⭐⭐⭐</div>
+        <div class="review-text">Fast access and clean interface. Highly recommended.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function start() {
+    const btn = document.getElementById('ctaBtn');
+    const wrap = document.getElementById('loaderWrap');
+    const fill = document.getElementById('fill');
+    const pct = document.getElementById('pct');
+    
+    btn.style.display = 'none';
+    wrap.classList.add('visible');
+    
+    let p = 0;
+    const interval = setInterval(() => {
+      p++;
+      pct.innerText = p + '%';
+      fill.style.width = p + '%';
+      if (p >= 100) {
+        clearInterval(interval);
+        // رابط اللوكر الخاص بك
+        window.location.href = 'https://appsave.online/cl/i/xppxvv';
+      }
+    }, 30);
+  }
+</script>
+
+</body>
+</html>
