@@ -3,18 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shadow Fight 2 – Premium Access</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Shadow Fight 2 – Ultimate Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;0,900;1,700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
     --cyan: #00c8ff;
+    --cyan-dim: rgba(0, 200, 255, 0.15);
+    --cyan-glow: rgba(0, 200, 255, 0.4);
     --bg: #000;
     --surface: #0c0c0d;
-    --border: #1a1a1e;
+    --surface-2: #111113;
+    --border: rgba(255,255,255,0.07);
+    --border-cyan: rgba(0, 200, 255, 0.25);
     --text: #e0e0e0;
-    --text-dim: #888;
+    --text-dim: #666;
+    --text-mid: #999;
   }
 
   body {
@@ -23,170 +28,581 @@
     font-family: 'Barlow', sans-serif;
     display: flex;
     justify-content: center;
-    padding: 20px 15px;
+    min-height: 100vh;
+    padding: 16px 14px 40px;
+    /* Subtle noise grain */
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
   }
 
   .page {
     width: 100%;
-    max-width: 400px; /* حجم مثالي لشاشة الهاتف */
+    max-width: 390px;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.6s ease both;
   }
 
-  /* ── SQUARE IMAGE FRAME ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── HERO IMAGE ── */
+  .hero-wrapper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    padding: 12px 12px 0;
+    display: flex;
+    justify-content: center;
+  }
+
   .hero {
     position: relative;
-    width: 100%;
-    aspect-ratio: 1 / 1; /* جعل الإطار مربعاً تماماً */
-    background: #080808;
-    border: 1px solid var(--border);
-    border-radius: 8px 8px 0 0;
+    width: 50%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
     overflow: hidden;
-  }
-  .hero img {
-    width: 100%; 
-    height: 100%;
-    object-fit: cover; /* لضمان ملء الصورة للمربع بدون تشويه */
-    display: block;
-  }
-  .hero-gradient {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom, transparent 60%, var(--surface) 100%);
+    border: 1px solid var(--border);
   }
 
-  /* ── CONTENT CARD ── */
+  .hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: brightness(0.85) saturate(1.1);
+    transition: transform 6s ease;
+  }
+
+  .hero:hover img { transform: scale(1.04); }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.1) 0%,
+      transparent 40%,
+      rgba(0,0,0,0.5) 80%,
+      var(--surface) 100%
+    );
+  }
+
+  /* top badge */
+  .hero-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-cyan);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--cyan);
+    text-transform: uppercase;
+  }
+
+  /* ── CARD ── */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-top: none;
-    border-radius: 0 0 8px 8px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border-radius: 0 0 10px 10px;
+    margin-top: 0;
+    padding: 20px 18px 24px;
+    position: relative;
+    overflow: hidden;
   }
 
-  .stats {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--border);
+  /* Subtle cyan corner glow */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, var(--cyan-dim) 0%, transparent 70%);
+    pointer-events: none;
   }
-  .stat-item { text-align: center; }
-  .stat-value { color: var(--cyan); font-weight: 700; font-size: 14px; }
-  .stat-label { color: var(--text-dim); font-size: 10px; text-transform: uppercase; margin-top: 4px; }
+
+  /* ── TITLE BLOCK ── */
+  .title-block {
+    margin-bottom: 18px;
+  }
+
+  .game-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    opacity: 0.85;
+  }
 
   .game-title {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 28px;
+    font-size: 36px;
     font-weight: 900;
     text-transform: uppercase;
     color: #fff;
-    margin-bottom: 10px;
+    line-height: 0.95;
+    letter-spacing: -0.5px;
+    /* Subtle glow */
+    text-shadow:
+      0 0 30px rgba(0, 200, 255, 0.25),
+      0 0 60px rgba(0, 200, 255, 0.1);
   }
 
+  .game-title span {
+    color: var(--cyan);
+    font-style: italic;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--border-cyan), transparent);
+    margin: 16px 0;
+  }
+
+  /* ── STATS ROW ── */
+  .stats {
+    display: flex;
+    gap: 0;
+    margin-bottom: 18px;
+  }
+
+  .stat-item {
+    flex: 1;
+    text-align: center;
+    padding: 10px 6px;
+    position: relative;
+  }
+
+  .stat-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .stat-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    color: var(--cyan);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-label {
+    color: var(--text-dim);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 3px;
+  }
+
+  /* ── DESCRIPTION ── */
   .game-desc {
     font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.6;
-    margin-bottom: 25px;
+    color: var(--text-mid);
+    line-height: 1.65;
+    margin-bottom: 22px;
+    font-weight: 300;
   }
 
-  /* ── BUTTON ── */
+  /* ── WHAT'S INSIDE ── */
+  .features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .feature-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: var(--text-mid);
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    transition: border-color 0.25s, color 0.25s;
+  }
+
+  .feature-pill:hover {
+    border-color: var(--border-cyan);
+    color: var(--text);
+  }
+
+  .feature-pill .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--cyan);
+    flex-shrink: 0;
+    opacity: 0.8;
+  }
+
+  /* ── CTA BUTTON ── */
+  .cta-wrap { position: relative; }
+
   .cta-btn {
     width: 100%;
-    padding: 16px;
+    padding: 16px 20px;
     background: transparent;
     border: 1px solid var(--cyan);
     color: var(--cyan);
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
-    letter-spacing: 1px;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s, box-shadow 0.3s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
   }
-  .cta-btn:active { transform: scale(0.98); background: rgba(0,200,255,0.05); }
 
-  /* ── LOADER ── */
-  .loader-wrap { display: none; margin-top: 15px; }
-  .loader-wrap.visible { display: block; }
-  .loader-track { height: 3px; background: #1a1a1e; border-radius: 2px; overflow: hidden; margin-top: 8px; }
-  .loader-fill { height: 100%; width: 0%; background: var(--cyan); transition: width 3s linear; }
+  /* Animated scan line */
+  .cta-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,200,255,0.08), transparent);
+    transition: left 0s;
+  }
 
-  .reviews { margin-top: 30px; }
-  .review { margin-bottom: 15px; padding: 10px; background: #111; border-radius: 4px; }
-  .review-user { font-size: 12px; color: #fff; font-weight: 600; }
-  .review-text { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+  .cta-btn:hover::before {
+    left: 160%;
+    transition: left 0.5s ease;
+  }
+
+  .cta-btn:hover {
+    background: rgba(0, 200, 255, 0.06);
+    box-shadow:
+      0 0 20px rgba(0, 200, 255, 0.15),
+      inset 0 0 20px rgba(0, 200, 255, 0.03);
+  }
+
+  .cta-btn:active {
+    transform: scale(0.985);
+    background: rgba(0, 200, 255, 0.1);
+  }
+
+  .cta-btn:disabled {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .btn-icon {
+    width: 16px;
+    height: 16px;
+    opacity: 0.9;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    display: none;
+    margin-top: 12px;
+  }
+
+  .progress-wrap.visible { display: block; }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .progress-meta .pct { color: var(--cyan); font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; }
+
+  .progress-track {
+    height: 2px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: visible;
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--cyan);
+    border-radius: 2px;
+    position: relative;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 8px var(--cyan-glow);
+  }
+
+  /* Glowing head on progress bar */
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px var(--cyan), 0 0 16px var(--cyan-glow);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .progress-fill.active::after { opacity: 1; }
+
+  /* ── REVIEWS ── */
+  .reviews-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-top: 28px;
+    margin-bottom: 10px;
+  }
+
+  .reviews { display: flex; flex-direction: column; gap: 8px; }
+
+  .review {
+    padding: 11px 13px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .review:hover { border-color: rgba(0,200,255,0.15); }
+
+  .review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+  .review-user {
+    font-size: 12px;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .review-stars {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--cyan);
+    opacity: 0.9;
+  }
+
+  .review-text {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.55;
+    font-weight: 300;
+  }
+
+  /* ── FOOTER NOTE ── */
+  .footer-note {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 10px;
+    color: #333;
+    letter-spacing: 0.5px;
+    line-height: 1.6;
+  }
+
+  /* ── SUCCESS STATE ── */
+  .success-msg {
+    display: none;
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: rgba(0, 200, 255, 0.05);
+    border: 1px solid var(--border-cyan);
+    border-radius: 5px;
+    font-size: 12px;
+    color: var(--cyan);
+    text-align: center;
+    letter-spacing: 0.3px;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .success-msg.visible { display: block; }
 </style>
 </head>
 <body>
 
 <div class="page">
-  <div class="hero">
-    <img src="https://i.postimg.cc/NMyLDg00/download-(1).jpg" alt="Shadow Fight 2">
-    <div class="hero-gradient"></div>
+
+  <!-- HERO -->
+  <div class="hero-wrapper">
+    <div class="hero">
+      <img src="https://i.postimg.cc/NMyLDg00/download-(1).jpg" alt="Shadow Fight 2">
+      <div class="hero-overlay"></div>
+      <div class="hero-badge">Free download</div>
+    </div>
   </div>
 
+  <!-- CARD -->
   <div class="card">
+
+    <!-- Title -->
+    <div class="title-block">
+      <div class="game-eyebrow">Ultimate game &amp; Tips</div>
+      <h1 class="game-title">Shadow<br>Fight <span>2</span></h1>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Stats -->
     <div class="stats">
       <div class="stat-item">
-        <div class="stat-value">★★★★★</div>
-        <div class="stat-label">4.9 Rating</div>
+        <div class="stat-value">★ 4.9</div>
+        <div class="stat-label">Rating</div>
       </div>
       <div class="stat-item">
         <div class="stat-value">1.2M+</div>
         <div class="stat-label">Downloads</div>
       </div>
-    </div>
-
-    <h1 class="game-title">Shadow Fight 2</h1>
-    <p class="game-desc">Experience the ultimate martial arts journey. Master lethal skills and legendary weapons in this premium fan-favorite edition.</p>
-
-    <button class="cta-btn" id="ctaBtn" onclick="start()">ACCESS CONTENT</button>
-
-    <div class="loader-wrap" id="loaderWrap">
-      <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--cyan)">
-        <span>VERIFYING...</span>
-        <span id="pct">0%</span>
+      <div class="stat-item">
+        <div class="stat-value">Free</div>
+        <div class="stat-label">Access</div>
       </div>
-      <div class="loader-track"><div class="loader-fill" id="fill"></div></div>
     </div>
 
+    <!-- Description -->
+    <p class="game-desc">Master the dark arts of Shadow Fight 2. This mod has everything, weapon, skill , and unlimitrd money — made for players who want to dominate every fight.</p>
+
+    <!-- Feature pills -->
+    <div class="features">
+      <div class="feature-pill"><span class="dot"></span>no password</div>
+      <div class="feature-pill"><span class="dot"></span>unlimited energy</div>
+      <div class="feature-pill"><span class="dot"></span>weapons unlocked</div>
+      <div class="feature-pill"><span class="dot"></span>unlimited money</div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-wrap">
+      <button class="cta-btn" id="ctaBtn" onclick="startAccess()">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
+        access content
+      </button>
+
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-meta">
+          <span>Loading game</span>
+          <span class="pct" id="pctLabel">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <div class="success-msg" id="successMsg">
+        ✦ game ready — opening now
+      </div>
+    </div>
+
+    <!-- Reviews -->
+    <div class="reviews-label">users Reviews</div>
     <div class="reviews">
       <div class="review">
-        <div class="review-user">Robert J. ⭐⭐⭐⭐⭐</div>
-        <div class="review-text">Works perfectly on my iPhone. The best version so far!</div>
+        <div class="review-header">
+          <span class="review-user">Robert J.</span>
+          <span class="review-stars">★★★★★</span>
+        </div>
+        <p class="review-text">The boss breakdown section alone saved me hours. nice mod.</p>
       </div>
       <div class="review">
-        <div class="review-user">Sarah W. ⭐⭐⭐⭐⭐</div>
-        <div class="review-text">Fast access and clean interface. Highly recommended.</div>
+        <div class="review-header">
+          <span class="review-user">Sarah W.</span>
+          <span class="review-stars">★★★★★</span>
+        </div>
+        <p class="review-text">Finally a mode that actually covers the late-game weapon upgrades properly.</p>
       </div>
     </div>
+
+    <p class="footer-note">Free download · No signup required</p>
+
   </div>
 </div>
 
 <script>
-  function start() {
+  function startAccess() {
     const btn = document.getElementById('ctaBtn');
-    const wrap = document.getElementById('loaderWrap');
-    const fill = document.getElementById('fill');
-    const pct = document.getElementById('pct');
-    
-    btn.style.display = 'none';
+    const wrap = document.getElementById('progressWrap');
+    const fill = document.getElementById('progressFill');
+    const label = document.getElementById('pctLabel');
+    const success = document.getElementById('successMsg');
+
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
     wrap.classList.add('visible');
-    
+    fill.classList.add('active');
+
     let p = 0;
     const interval = setInterval(() => {
-      p++;
-      pct.innerText = p + '%';
+      p += 1;
+      label.textContent = p + '%';
       fill.style.width = p + '%';
+
       if (p >= 100) {
         clearInterval(interval);
-        // رابط اللوكر الخاص بك
-        window.location.href = 'https://appsave.online/cl/i/xppxvv';
+        fill.classList.remove('active');
+        wrap.style.display = 'none';
+        success.classList.add('visible');
+
+        // ← Replace with your actual article URL
+        setTimeout(() => {
+          window.location.href = 'https://saveapp.store/cl/i/xppxvv';
+        }, 800);
       }
-    }, 30);
+    }, 25);
   }
 </script>
 
